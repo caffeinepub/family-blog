@@ -2,40 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-internet-identity-authentication-so-family-members-can-sign-in-out-and-the-ui-can-show-the-signed-in-principal-identity-state",
-      "featureTitle": "Add Internet Identity authentication so family members can sign in/out and the UI can show the signed-in principal identity state.",
+      "featureId": "feature-update-the-post-editor-ui-create-and-edit-to-require-a-photo-before-allowing-a-post-to-be-published-or-updated-including-clear-validation-messaging",
+      "featureTitle": "Update the post editor UI (create and edit) to require a photo before allowing a post to be published or updated, including clear validation messaging.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/auth/IdentityIndicator.tsx",
-        "frontend/src/components/auth/LoginButton.tsx",
-        "frontend/src/components/auth/ProfileSetupDialog.tsx",
-        "frontend/src/hooks/useCurrentUserProfile.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-the-main-blog-ui-a-posts-feed-page-post-detail-page-and-a-post-editor-create-edit-that-connects-to-the-backend-using-react-query",
-      "featureTitle": "Create the main blog UI: a posts feed page, post detail page, and a post editor (create + edit) that connects to the backend using React Query.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/posts/PostActions.tsx",
-        "frontend/src/components/posts/PostCard.tsx",
         "frontend/src/hooks/usePosts.ts",
-        "frontend/src/pages/PostDetailPage.tsx",
         "frontend/src/pages/PostEditorPage.tsx",
-        "frontend/src/pages/PostsFeedPage.tsx",
-        "frontend/src/utils/format.ts"
+        "frontend/src/utils/photos.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -46,18 +18,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-3"
+        "REQ-7"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-consistent-creative-visual-theme-for-the-family-blog-colors-typography-spacing-and-layout-and-apply-it-across-all-pages-and-components",
-      "featureTitle": "Add a consistent, creative visual theme for the family blog (colors, typography, spacing, and layout) and apply it across all pages and components.",
+      "featureId": "feature-render-the-post-photo-in-the-posts-feed-cards-and-on-the-post-detail-page-so-readers-can-see-the-mandatory-image-for-each-post",
+      "featureTitle": "Render the post photo in the posts feed cards and on the post detail page so readers can see the mandatory image for each post.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
+        "frontend/src/components/posts/PostCard.tsx",
+        "frontend/src/pages/PostDetailPage.tsx",
+        "frontend/src/utils/photos.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -68,27 +39,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-generated-static-image-assets-for-the-blog-branding-and-render-them-in-the-ui-from-frontend-public-assets-generated",
-      "featureTitle": "Add generated static image assets for the blog branding and render them in the UI (from frontend/public/assets/generated).",
-      "files": [
-        "frontend/src/components/layout/AppHeader.tsx",
-        "frontend/src/components/layout/AppLayout.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
+        "REQ-8"
       ],
       "confidence": "high"
     }

@@ -95,6 +95,7 @@ export interface Post {
     body: string;
     author: Principal;
     timestamp: Time;
+    photo: string;
 }
 export type Time = bigint;
 export interface UserProfile {
@@ -109,7 +110,7 @@ export enum UserRole {
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createPost(title: string, body: string): Promise<PostId>;
+    createPost(title: string, body: string, photo: string): Promise<PostId>;
     deletePost(postId: PostId): Promise<void>;
     getAllPosts(): Promise<Array<Post>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
@@ -119,7 +120,7 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updatePost(postId: PostId, title: string, body: string): Promise<void>;
+    updatePost(postId: PostId, title: string, body: string, photo: string): Promise<void>;
 }
 import type { UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -152,17 +153,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createPost(arg0: string, arg1: string): Promise<PostId> {
+    async createPost(arg0: string, arg1: string, arg2: string): Promise<PostId> {
         if (this.processError) {
             try {
-                const result = await this.actor.createPost(arg0, arg1);
+                const result = await this.actor.createPost(arg0, arg1, arg2);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createPost(arg0, arg1);
+            const result = await this.actor.createPost(arg0, arg1, arg2);
             return result;
         }
     }
@@ -292,17 +293,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updatePost(arg0: PostId, arg1: string, arg2: string): Promise<void> {
+    async updatePost(arg0: PostId, arg1: string, arg2: string, arg3: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updatePost(arg0, arg1, arg2);
+                const result = await this.actor.updatePost(arg0, arg1, arg2, arg3);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updatePost(arg0, arg1, arg2);
+            const result = await this.actor.updatePost(arg0, arg1, arg2, arg3);
             return result;
         }
     }

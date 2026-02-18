@@ -5,8 +5,9 @@ import { useGetCallerUserProfile } from '../hooks/useCurrentUserProfile';
 import PostActions from '../components/posts/PostActions';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Loader2, User } from 'lucide-react';
+import { ArrowLeft, Loader2, User, ImageOff } from 'lucide-react';
 import { formatDateTime } from '../utils/format';
+import { getPhotoPreviewUrl, hasValidPhoto } from '../utils/photos';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function PostDetailPage() {
@@ -46,6 +47,8 @@ export default function PostDetailPage() {
     );
   }
 
+  const hasPhoto = hasValidPhoto(post.photo);
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="mb-6">
@@ -57,43 +60,61 @@ export default function PostDetailPage() {
         </Link>
       </div>
 
-      <article className="bg-card rounded-lg border border-border shadow-warm p-8 md:p-12">
-        <header className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
-            {post.title}
-          </h1>
-
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>
-                {isAuthor && userProfile?.name
-                  ? userProfile.name
-                  : post.author.toString().slice(0, 8) + '...'}
-              </span>
-            </div>
-            <span>•</span>
-            <time>{formatDateTime(post.timestamp)}</time>
+      <article className="bg-card rounded-lg border border-border shadow-warm overflow-hidden">
+        {hasPhoto ? (
+          <div className="w-full h-96 overflow-hidden">
+            <img
+              src={getPhotoPreviewUrl(post.photo)}
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
           </div>
+        ) : (
+          <div className="w-full h-96 bg-muted flex items-center justify-center border-b border-border">
+            <div className="text-center text-muted-foreground">
+              <ImageOff className="w-16 h-16 mx-auto mb-3" />
+              <p className="text-lg">Photo unavailable</p>
+            </div>
+          </div>
+        )}
 
-          {isAuthor && (
-            <>
-              <Separator className="my-6" />
-              <PostActions
-                postId={post.id}
-                onDeleteSuccess={() => navigate({ to: '/' })}
-              />
-            </>
-          )}
-        </header>
+        <div className="p-8 md:p-12">
+          <header className="mb-8">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
+              {post.title}
+            </h1>
 
-        <Separator className="my-8" />
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span>
+                  {isAuthor && userProfile?.name
+                    ? userProfile.name
+                    : post.author.toString().slice(0, 8) + '...'}
+                </span>
+              </div>
+              <span>•</span>
+              <time>{formatDateTime(post.timestamp)}</time>
+            </div>
 
-        <div className="prose prose-blog max-w-none">
-          <div className="text-lg leading-relaxed whitespace-pre-wrap">{post.body}</div>
+            {isAuthor && (
+              <>
+                <Separator className="my-6" />
+                <PostActions
+                  postId={post.id}
+                  onDeleteSuccess={() => navigate({ to: '/' })}
+                />
+              </>
+            )}
+          </header>
+
+          <Separator className="my-8" />
+
+          <div className="prose prose-blog max-w-none">
+            <div className="text-lg leading-relaxed whitespace-pre-wrap">{post.body}</div>
+          </div>
         </div>
       </article>
     </div>
   );
 }
-

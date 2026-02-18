@@ -13,6 +13,7 @@ export interface Post {
     body: string;
     author: Principal;
     timestamp: Time;
+    photo: string;
 }
 export type Time = bigint;
 export interface UserProfile {
@@ -26,7 +27,7 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createPost(title: string, body: string): Promise<PostId>;
+    createPost(title: string, body: string, photo: string): Promise<PostId>;
     deletePost(postId: PostId): Promise<void>;
     getAllPosts(): Promise<Array<Post>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
@@ -36,5 +37,5 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updatePost(postId: PostId, title: string, body: string): Promise<void>;
+    updatePost(postId: PostId, title: string, body: string, photo: string): Promise<void>;
 }

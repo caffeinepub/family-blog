@@ -21,13 +21,14 @@ export const Post = IDL.Record({
   'body' : IDL.Text,
   'author' : IDL.Principal,
   'timestamp' : Time,
+  'photo' : IDL.Text,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createPost' : IDL.Func([IDL.Text, IDL.Text], [PostId], []),
+  'createPost' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [PostId], []),
   'deletePost' : IDL.Func([PostId], [], []),
   'getAllPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
@@ -41,7 +42,7 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updatePost' : IDL.Func([PostId, IDL.Text, IDL.Text], [], []),
+  'updatePost' : IDL.Func([PostId, IDL.Text, IDL.Text, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
@@ -60,13 +61,14 @@ export const idlFactory = ({ IDL }) => {
     'body' : IDL.Text,
     'author' : IDL.Principal,
     'timestamp' : Time,
+    'photo' : IDL.Text,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createPost' : IDL.Func([IDL.Text, IDL.Text], [PostId], []),
+    'createPost' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [PostId], []),
     'deletePost' : IDL.Func([PostId], [], []),
     'getAllPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
@@ -80,7 +82,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updatePost' : IDL.Func([PostId, IDL.Text, IDL.Text], [], []),
+    'updatePost' : IDL.Func([PostId, IDL.Text, IDL.Text, IDL.Text], [], []),
   });
 };
 

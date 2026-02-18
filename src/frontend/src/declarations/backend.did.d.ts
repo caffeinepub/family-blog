@@ -16,6 +16,7 @@ export interface Post {
   'body' : string,
   'author' : Principal,
   'timestamp' : Time,
+  'photo' : string,
 }
 export type PostId = bigint;
 export type Time = bigint;
@@ -26,7 +27,7 @@ export type UserRole = { 'admin' : null } |
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createPost' : ActorMethod<[string, string], PostId>,
+  'createPost' : ActorMethod<[string, string, string], PostId>,
   'deletePost' : ActorMethod<[PostId], undefined>,
   'getAllPosts' : ActorMethod<[], Array<Post>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
@@ -36,7 +37,7 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updatePost' : ActorMethod<[PostId, string, string], undefined>,
+  'updatePost' : ActorMethod<[PostId, string, string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -40,9 +40,9 @@ export function useCreatePost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ title, body }: { title: string; body: string }) => {
+    mutationFn: async ({ title, body, photo }: { title: string; body: string; photo: string }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createPost(title, body);
+      return actor.createPost(title, body, photo);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
@@ -55,9 +55,9 @@ export function useUpdatePost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ postId, title, body }: { postId: PostId; title: string; body: string }) => {
+    mutationFn: async ({ postId, title, body, photo }: { postId: PostId; title: string; body: string; photo: string }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updatePost(postId, title, body);
+      return actor.updatePost(postId, title, body, photo);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
@@ -80,4 +80,3 @@ export function useDeletePost() {
     },
   });
 }
-

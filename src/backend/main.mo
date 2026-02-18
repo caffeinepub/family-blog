@@ -9,7 +9,10 @@ import Principal "mo:core/Principal";
 import Text "mo:core/Text";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+
+(with migration = Migration.run)
 actor {
   public type PostId = Nat;
 
@@ -18,6 +21,7 @@ actor {
     author : Principal;
     title : Text;
     body : Text;
+    photo : Text; // Path to photo (required)
     timestamp : Time.Time;
   };
 
@@ -67,15 +71,21 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  public shared ({ caller }) func createPost(title : Text, body : Text) : async PostId {
+  public shared ({ caller }) func createPost(title : Text, body : Text, photo : Text) : async PostId {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can create posts");
     };
+
+    if (photo.size() == 0) {
+      Runtime.trap("Photo is required for creating a post");
+    };
+
     let post : Post = {
       id = nextPostId;
       author = caller;
       title;
       body;
+      photo;
       timestamp = Time.now();
     };
     posts.add(nextPostId, post);
@@ -100,7 +110,7 @@ actor {
     posts.values().toArray().sort(Post.compareByTimestamp);
   };
 
-  public shared ({ caller }) func updatePost(postId : PostId, title : Text, body : Text) : async () {
+  public shared ({ caller }) func updatePost(postId : PostId, title : Text, body : Text, photo : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can update posts");
     };
@@ -110,10 +120,16 @@ actor {
         if (post.author != caller and not AccessControl.isAdmin(accessControlState, caller)) {
           Runtime.trap("Unauthorized: Only the author or an admin can update this post");
         };
+
+        if (photo.size() == 0) {
+          Runtime.trap("Photo is required for updating a post");
+        };
+
         let updated : Post = {
           post with
           title;
           body;
+          photo;
         };
         posts.add(postId, updated);
       };

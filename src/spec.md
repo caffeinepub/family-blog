@@ -1,14 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Create a simple family blog with Internet Identity sign-in, persistent post CRUD, and a cohesive themed UI with generated branding images.
+**Goal:** Make a photo mandatory for every blog post across backend validation and frontend editor/display.
 
 **Planned changes:**
-- Add Internet Identity sign-in/out and display signed-in principal; disable create/edit when signed out.
-- Implement a single Motoko backend actor with stable-storage persistence for posts (id, title, content, author principal, createdAt, updatedAt) and CRUD APIs.
-- Enforce authorization so only the original author can update/delete their posts; return clear success/error results for invalid ids/unauthorized actions.
-- Build blog UI pages: posts feed (newest first), post detail, and post editor (create/edit) using React Query for fetching, caching, and invalidation after mutations.
-- Apply a consistent creative visual theme (non blue/purple primary palette) across all pages/components, responsive on mobile/desktop.
-- Add and reference generated static branding assets from `frontend/public/assets/generated` and render them in the header/landing area without layout shift.
+- Update the backend Post data model to include required photo bytes and photo content type, and update Candid/TS bindings accordingly.
+- Enforce backend validation so create/update reject requests when the photo is missing or empty, without changing existing authorization rules.
+- Update the post editor (create and edit) UI to require a photo, show clear English validation errors, and preview the selected image before saving.
+- Update the posts feed cards and post detail page to render the post photo, with a safe fallback UI if an older/unexpected post lacks a photo.
 
-**User-visible outcome:** Family members can sign in with Internet Identity, browse posts, view details, and (when signed in) create posts; authors can edit/delete their own posts, with a cohesive themed UI and visible blog branding.
+**User-visible outcome:** Users must add a photo to publish or update a post, and readers will see a photo displayed on post cards and post detail pages.

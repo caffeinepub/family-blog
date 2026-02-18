@@ -1,11 +1,10 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 5,
   "summary": "Build a family blog application.",
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Warm, cozy family-blog logo mark with simple illustration style (family-blog-logo.dim_512x512.png)\n- Wide header banner in a warm scrapbook/journal aesthetic with subtle paper texture and gentle accents (family-blog-banner.dim_1600x500.png)",
   "existing_features": [
     {
       "id": "feature-add-internet-identity-authentication-so-family-members-can-sign-in-out-and-the-ui-can-show-the-signed-in-principal-identity-state",
@@ -38,6 +37,22 @@
         "REQ-5"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-post-editor-ui-create-and-edit-to-require-a-photo-before-allowing-a-post-to-be-published-or-updated-including-clear-validation-messaging",
+      "title": "Update the post editor UI (create and edit) to require a photo before allowing a post to be published or updated, including clear validation messaging.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-render-the-post-photo-in-the-posts-feed-cards-and-on-the-post-detail-page-so-readers-can-see-the-mandatory-image-for-each-post",
+      "title": "Render the post photo in the posts feed cards and on the post detail page so readers can see the mandatory image for each post.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -52,6 +67,20 @@
       "summary": "Implement backend data model and APIs to support a family blog with persistent posts: create post, list posts (newest first), get post by id, update post, and delete post, with each post associated to the author principal and timestamps.",
       "reqIds": [
         "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Require a photo/image for each blog post (make photo mandatory when creating or editing a post).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Update the backend post data model and APIs so every post includes a required photo, and enforce that photo is present when creating or updating a post.",
+      "reqIds": [
+        "REQ-6"
       ],
       "status": "pending"
     }

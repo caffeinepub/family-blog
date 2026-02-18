@@ -1,99 +1,80 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T23:59:41.215Z",
-  "summary": "Core blog UI, Internet Identity sign-in/out, routing, and React Query hooks are implemented. However, the backend post model/API does not meet the persistence and data-shape requirements (stable storage, createdAt/updatedAt, and clear error results), and several unrequested features were added (user profiles, admin token/access-control initialization, external promotional footer).",
+  "generatedAt": "2026-02-18T00:08:41.410Z",
+  "summary": "Frontend implements mandatory photo selection with preview, validation messaging, and renders photos in feed/detail with fallback. Backend adds a required `photo` field as `Text` and enforces non-empty photo on create (and likely update, but the update logic is truncated). Several REQ-6/REQ-7 acceptance criteria about storing/sending image bytes plus a separate content type are not evidenced in the diff.",
   "missing_requirements": [
     {
-      "id": "REQ-2",
-      "requirement": "Posts are persisted in canister stable storage (survive canister upgrade).",
-      "reason": "The backend stores posts in an in-memory Map with a var nextPostId, but no stable variables or preupgrade/postupgrade logic is shown in the diff summary.",
+      "id": "REQ-6",
+      "requirement": "Backend Post type includes fields to store a post photo (image bytes) and its content type (e.g., \"image/jpeg\").",
+      "reason": "The backend Post type only shows `photo : Text` and no separate content-type field or byte array field.",
       "evidence": [
         "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-2",
-      "requirement": "Each post includes at minimum: id, title, content, author principal, createdAt, updatedAt.",
-      "reason": "The Post type only includes id, author, title, body, and a single timestamp field; there are no createdAt/updatedAt fields, and updatePost does not update timestamps.",
+      "id": "REQ-6",
+      "requirement": "Generated candid/TS bindings are updated so the frontend can send/receive the photo fields (including photo bytes and content type).",
+      "reason": "Frontend uses `photo: string` and there is no evidence of generated binding updates or content-type fields being sent/received; only a single `photo` string is passed through hooks.",
+      "evidence": [
+        "frontend/src/hooks/usePosts.ts",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "updatePost rejects (traps) if no photo is provided or the provided photo is empty.",
+      "reason": "The updatePost implementation is truncated at `if (photo.si...`, so the required trap on empty photo for updates cannot be fully verified from the provided diff.",
       "evidence": [
         "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-2",
-      "requirement": "List endpoint returns posts sorted by createdAt descending.",
-      "reason": "Backend getAllPosts sorts with compareByTimestamp which orders ascending by timestamp; the frontend reverses the list, but the requirement specifies the backend list endpoint returns newest-first.",
+      "id": "REQ-7",
+      "requirement": "Create/update mutations send the photo data and content type along with title/body to the backend.",
+      "reason": "Create/update mutations only send a single `photo` string; there is no separate `contentType` parameter being sent.",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/usePosts.ts"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Backend methods return clear success/error results for invalid ids and unauthorized operations.",
-      "reason": "Backend methods use Runtime.trap for errors (e.g., missing post, unauthorized) rather than returning structured success/error results.",
-      "evidence": [
-        "backend/main.mo"
+        "frontend/src/hooks/usePosts.ts",
+        "frontend/src/utils/photos.ts",
+        "frontend/src/pages/PostEditorPage.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "User profile system (get/save caller profile) plus a forced profile setup dialog collecting a name.",
-      "reason": "The BuildRequest only asks for blog posts + Internet Identity auth state; it does not request user profiles or name onboarding.",
+      "description": "Added a backend migration module that maps old posts to a new shape with a `photo = \"legacy\"` placeholder.",
+      "reason": "The BuildRequest did not request data migration behavior or legacy placeholders; it only requested enforcing mandatory photos for create/update and rendering fallback if older data lacks photos.",
       "evidence": [
+        "backend/migration.mo",
         "backend/main.mo",
-        "frontend/src/hooks/useCurrentUserProfile.ts",
-        "frontend/src/components/auth/ProfileSetupDialog.tsx",
-        "frontend/src/components/auth/IdentityIndicator.tsx",
-        "frontend/src/components/layout/AppLayout.tsx"
+        "frontend/src/utils/photos.ts"
       ]
     },
     {
-      "description": "Admin token / access-control initialization via a secret URL parameter (caffeineAdminToken) and backend access-control mixins.",
-      "reason": "No requirement requests an admin token mechanism or custom access-control initialization; authorization requested was limited to per-author update/delete.",
+      "description": "Client-side file validation constraints (5MB max size) and specific accepted MIME list beyond 'common image types'.",
+      "reason": "REQ-7 requires accepting common image types, but does not specify a file size limit or the exact MIME list; these are additional constraints.",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/useActor.ts",
-        "frontend/src/utils/urlParams.ts"
+        "frontend/src/utils/photos.ts"
       ]
     },
     {
-      "description": "External promotional footer link to caffeine.ai and inclusion of a heart symbol in the footer text.",
-      "reason": "Not requested in the BuildRequest and introduces extra branding/UX not specified.",
+      "description": "Theme/CSS/Tailwind configuration changes unrelated to mandatory post photos.",
+      "reason": "Not requested in REQ-6/7/8; appears to be broader styling work.",
       "evidence": [
-        "frontend/src/components/layout/AppLayout.tsx"
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.72,
   "changed_files": [
-    "all_files_summary.json",
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/src/App.tsx",
-    "frontend/src/components/auth/IdentityIndicator.tsx",
-    "frontend/src/components/auth/LoginButton.tsx",
-    "frontend/src/components/auth/ProfileSetupDialog.tsx",
-    "frontend/src/components/layout/AppHeader.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/posts/PostActions.tsx",
     "frontend/src/components/posts/PostCard.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useCurrentUserProfile.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
     "frontend/src/hooks/usePosts.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
     "frontend/src/pages/PostDetailPage.tsx",
     "frontend/src/pages/PostEditorPage.tsx",
-    "frontend/src/pages/PostsFeedPage.tsx",
-    "frontend/src/utils/format.ts",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/utils/photos.ts",
     "project_state.json"
   ]
 }

@@ -8,11 +8,12 @@
   "frontend/src/components/auth/IdentityIndicator.tsx": "Compact badge displaying the signed-in user's profile name or truncated principal.",
   "frontend/src/components/auth/ProfileSetupDialog.tsx": "Modal dialog for first-time users to enter their name, preventing flash with proper loading states.",
   "frontend/src/hooks/useCurrentUserProfile.ts": "React Query hooks for fetching and saving the current user's profile with proper actor dependency handling.",
-  "frontend/src/hooks/usePosts.ts": "React Query hooks for all post operations (list, get, create, update, delete) with cache invalidation.",
+  "frontend/src/hooks/usePosts.ts": "React Query hooks for all post operations (list, get, create, update, delete) with cache invalidation, now including mandatory photo parameter in create/update mutations.",
   "frontend/src/utils/format.ts": "Utility functions for formatting timestamps and truncating principal strings.",
   "frontend/src/pages/PostsFeedPage.tsx": "Main feed page displaying all posts in reverse chronological order with empty state and new post button.",
-  "frontend/src/pages/PostDetailPage.tsx": "Post detail page showing full post content with author-only edit/delete actions.",
-  "frontend/src/pages/PostEditorPage.tsx": "Post creation and editing page with title and body fields, handling both new and edit modes.",
-  "frontend/src/components/posts/PostCard.tsx": "Reusable post preview card component for the feed with title, preview, author, and date.",
-  "frontend/src/components/posts/PostActions.tsx": "Author-only action bar with edit and delete buttons, including confirmation dialog for deletion."
+  "frontend/src/pages/PostDetailPage.tsx": "Post detail page showing full post content with prominent photo display at the top, author-only edit/delete actions, and fallback for missing photos.",
+  "frontend/src/pages/PostEditorPage.tsx": "Post creation and editing page with title, body, and mandatory photo fields, including photo preview, validation, and error handling for both new and edit modes.",
+  "frontend/src/components/posts/PostCard.tsx": "Reusable post preview card component displaying post photo thumbnail, title, preview text, author, and date with fallback for missing photos.",
+  "frontend/src/components/posts/PostActions.tsx": "Author-only action bar with edit and delete buttons, including confirmation dialog for deletion.",
+  "frontend/src/utils/photos.ts": "Utility functions for validating, reading, and displaying post photos with support for data URL conversion and fallback handling."
 }

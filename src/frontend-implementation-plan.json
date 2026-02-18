@@ -1,156 +1,64 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Family Blog (frontend: Internet Identity auth + blog UI)",
+  "title": "Family Blog - Require and display a mandatory post photo",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Add Internet Identity sign-in/out UI and signed-in principal state (with profile name) to enable/disable authoring actions.",
+      "id": "REQ-7",
+      "summary": "Require a photo in the post editor (create/edit), with validation messaging, preview, and sending photo data to the backend.",
       "acceptanceCriteria": [
-        "A user can sign in and sign out using Internet Identity.",
-        "When signed out, the app clearly indicates the user is not signed in and disables post creation/edit actions.",
-        "When signed in, the app shows a compact identity indicator (e.g., principal) and enables post creation/edit actions."
+        "The post editor form includes a photo input control (file picker) that accepts common image types.",
+        "On create: attempting to publish without selecting a photo shows an English validation error (e.g., \"Please add a photo\") and does not call the create mutation.",
+        "On edit: the editor shows the existing post photo; saving is blocked unless the post has a photo (existing or newly selected), and attempting to save without a photo shows an English validation error.",
+        "When a photo is selected, the UI shows a preview of the image before saving.",
+        "Create/update mutations send the photo data and content type along with title/body to the backend."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/auth/LoginButton.tsx",
+          "path": "frontend/src/utils/photos.ts",
           "operation": "create",
-          "description": "Create a login/logout button that uses the existing useInternetIdentity hook and clears React Query cache on logout (per the authorization component guidance). Verify the component's usage instructions before implementing."
+          "description": "Add frontend-only helpers to (1) validate selected image files, (2) read a File into the backend-compatible payload (bytes/base64 per updated bindings) plus content type, and (3) create a safe preview src for UI rendering."
         },
-        {
-          "path": "frontend/src/components/auth/IdentityIndicator.tsx",
-          "operation": "create",
-          "description": "Create a compact signed-in indicator that shows a human-friendly name from UserProfile when available (fallback to shortened principal string) and exposes a clear signed-out state. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/auth/ProfileSetupDialog.tsx",
-          "operation": "create",
-          "description": "Create a first-login profile setup dialog that prompts for the user's name and saves it via backend getCallerUserProfile/saveCallerUserProfile; prevent modal flash using the authorization component guidance for React Query loading/isFetched. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useCurrentUserProfile.ts",
-          "operation": "create",
-          "description": "Add React Query hooks to fetch and cache current user profile and role (getCallerUserProfile/getCallerUserRole/isCallerAdmin) using useActor; include safe enabled-guards while the actor is loading. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "create",
-          "description": "Wire authentication UI into the global layout: render LoginButton + IdentityIndicator, show ProfileSetupDialog only when authenticated and profile missing, and ensure authoring routes/actions are disabled or guarded when signed out. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Build posts feed, post detail, and post editor (create/edit) using React Query and backend actor calls; enforce author-only controls in the UI.",
-      "acceptanceCriteria": [
-        "Posts feed shows title, author, and date; clicking a post opens its detail view.",
-        "Post detail view shows title, author, created/updated dates, and full content.",
-        "Signed-in users can create a new post from the UI and see it appear in the feed after save.",
-        "Authors can edit and delete their own posts from the UI; non-authors cannot see edit/delete controls.",
-        "React Query caches and refetches appropriately after create/update/delete so the UI stays consistent without manual refresh."
-      ],
-      "file_operations": [
         {
           "path": "frontend/src/hooks/usePosts.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for listing posts (getAllPosts), fetching a single post (getPost), and mutations (createPost/updatePost/deletePost) with appropriate invalidation so feed/detail stay consistent."
-        },
-        {
-          "path": "frontend/src/utils/format.ts",
-          "operation": "create",
-          "description": "Add small shared formatting helpers for dates and principal display (e.g., truncation) to keep feed/detail/editor consistent."
-        },
-        {
-          "path": "frontend/src/pages/PostsFeedPage.tsx",
-          "operation": "create",
-          "description": "Implement the posts feed UI (newest first as returned by backend), showing title, author, and date with navigation to post details; show a clear empty-state."
-        },
-        {
-          "path": "frontend/src/pages/PostDetailPage.tsx",
-          "operation": "create",
-          "description": "Implement the post detail page showing title, author, created/updated dates, and full content; show edit/delete controls only when the signed-in principal matches post.author."
+          "operation": "modify",
+          "description": "Update create/update mutations to accept and forward required photo payload (photo bytes/base64 + content type) alongside title/body, matching the updated generated TS bindings (no create/update call should omit photo)."
         },
         {
           "path": "frontend/src/pages/PostEditorPage.tsx",
-          "operation": "create",
-          "description": "Implement create/edit editor with title + body fields; disable and/or redirect if signed out; on save, navigate back to detail/feed and rely on React Query invalidation to refresh."
+          "operation": "modify",
+          "description": "Add a required photo picker (accept common image types), show an inline preview, prefill and display the existing post photo while editing, and add English validation that blocks publish/update and prevents calling the create/update mutations when no photo (existing or newly selected) is available."
         },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Align frontend type declarations with the regenerated bindings for mandatory post photo fields (post photo bytes + content type, and updated createPost/updatePost signatures) so the editor can send/receive the required photo data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Display the post photo in the feed cards and post detail page, with a safe fallback if missing.",
+      "acceptanceCriteria": [
+        "PostsFeedPage/PostCard displays the post photo thumbnail/preview for each post.",
+        "PostDetailPage displays the post photo prominently near the top of the post content.",
+        "If an unexpected post record without a photo is encountered (e.g., older data), the UI renders a clear fallback state without crashing (e.g., placeholder box + \"Photo unavailable\")."
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/components/posts/PostCard.tsx",
-          "operation": "create",
-          "description": "Create a reusable post preview card for the feed (composed from existing UI primitives without modifying frontend/src/components/ui)."
-        },
-        {
-          "path": "frontend/src/components/posts/PostActions.tsx",
-          "operation": "create",
-          "description": "Create a small action bar (Edit/Delete) that is only rendered for authors; handle mutation loading/error states gracefully."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add routing and navigation wiring for feed, detail, and editor pages (including routes for new post and edit post); ensure editor routes are guarded/disabled when signed out."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Apply a consistent warm, creative theme (non-blue/purple primary) across the blog layout and pages with responsive typography and spacing.",
-      "acceptanceCriteria": [
-        "Theme is applied consistently across feed, detail, and editor pages (typography scale, button styles, card styles, spacing).",
-        "Design avoids a default/unstyled look and remains readable on mobile and desktop.",
-        "Theme does not rely on a blue/purple primary palette."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "create",
-          "description": "Define global theme tokens (CSS variables consumed by Tailwind/shadcn) using a warm palette (e.g., terracotta/sage/cream/charcoal), base typography, and consistent spacing defaults; ensure mobile/desktop readability."
+          "description": "Render a post photo thumbnail/preview within the feed card using the shared photo rendering helper; if the post record lacks photo data, render a non-crashing placeholder state with clear text (e.g., \"Photo unavailable\")."
         },
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/pages/PostDetailPage.tsx",
           "operation": "modify",
-          "description": "Adjust Tailwind theme extensions (if needed) to support the warm theme (typography, container spacing, and any extra semantic colors) while keeping the primary palette non-blue/purple."
+          "description": "Render the post photo prominently near the top of the post detail view using the shared photo rendering helper; if the post record lacks photo data, render a clear fallback placeholder without crashing."
         },
         {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "create",
-          "description": "Create a consistent layout wrapper with header (branding + auth area) and main content container; apply cohesive spacing and typography across all pages."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/utils/photos.ts",
           "operation": "modify",
-          "description": "Wrap all routes/pages in AppLayout so the theme, header, and spacing are consistent across feed/detail/editor."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Add and render generated branding images (logo + banner) as responsive static assets without layout shift.",
-      "acceptanceCriteria": [
-        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend (not served through the backend).",
-        "The header/landing area displays the generated banner and/or logo in a visually cohesive way with the chosen theme.",
-        "Images are responsive and do not cause layout shift on load."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/assets/generated/family-blog-logo.dim_512x512.png",
-          "operation": "create",
-          "description": "Add the generated static logo asset at the exact path frontend/public/assets/generated/family-blog-logo.dim_512x512.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/family-blog-banner.dim_1600x500.png",
-          "operation": "create",
-          "description": "Add the generated static banner asset at the exact path frontend/public/assets/generated/family-blog-banner.dim_1600x500.png."
-        },
-        {
-          "path": "frontend/src/components/layout/AppHeader.tsx",
-          "operation": "create",
-          "description": "Render the banner and logo in the header using fixed intrinsic dimensions/aspect-ratio to prevent layout shift and make them responsive; integrate LoginButton/IdentityIndicator cohesively with the theme."
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Wire AppHeader into the layout so the generated images appear in the header/landing area on all pages."
+          "description": "Add/extend helper(s) to convert the stored post photo representation from the updated bindings into a browser-renderable image src (and detect missing/empty photo for fallback rendering)."
         }
       ]
     }
