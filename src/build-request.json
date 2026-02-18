@@ -1,0 +1,120 @@
+{
+  "kind": "build_request",
+  "title": "Family Blog (posts with Internet Identity sign-in)",
+  "projectName": "Family Blog",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Add Internet Identity authentication so family members can sign in/out and the UI can show the signed-in principal identity state.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "build a blog for my fam"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A user can sign in and sign out using Internet Identity.",
+        "When signed out, the app clearly indicates the user is not signed in and disables post creation/edit actions.",
+        "When signed in, the app shows a compact identity indicator (e.g., principal) and enables post creation/edit actions."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement backend data model and APIs to support a family blog with persistent posts: create post, list posts (newest first), get post by id, update post, and delete post, with each post associated to the author principal and timestamps.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "build a blog for my fam"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Posts are persisted in canister stable storage (survive canister upgrade).",
+        "Each post includes at minimum: id, title, content (rich text not required; plain text/markdown acceptable), author principal, createdAt, updatedAt.",
+        "List endpoint returns posts sorted by createdAt descending.",
+        "Update/delete operations are authorized so only the original author can update or delete their own posts.",
+        "Backend methods return clear success/error results for invalid ids and unauthorized operations."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Create the main blog UI: a posts feed page, post detail page, and a post editor (create + edit) that connects to the backend using React Query.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "build a blog for my fam"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Posts feed shows title, author, and date; clicking a post opens its detail view.",
+        "Post detail view shows title, author, created/updated dates, and full content.",
+        "Signed-in users can create a new post from the UI and see it appear in the feed after save.",
+        "Authors can edit and delete their own posts from the UI; non-authors cannot see edit/delete controls.",
+        "React Query caches and refetches appropriately after create/update/delete so the UI stays consistent without manual refresh."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add a consistent, creative visual theme for the family blog (colors, typography, spacing, and layout) and apply it across all pages and components.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "build a blog for my fam"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Theme is applied consistently across feed, detail, and editor pages (typography scale, button styles, card styles, spacing).",
+        "Design avoids a default/unstyled look and remains readable on mobile and desktop.",
+        "Theme does not rely on a blue/purple primary palette."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add generated static image assets for the blog branding and render them in the UI (from frontend/public/assets/generated).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "build a blog for my fam"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend (not served through the backend).",
+        "The header/landing area displays the generated banner and/or logo in a visually cohesive way with the chosen theme.",
+        "Images are responsive and do not cause layout shift on load."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
+    "Do not edit any frontend files under immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui (compose instead).",
+    "Use English for all user-facing UI text."
+  ],
+  "nonGoals": [
+    "No comments system.",
+    "No third-party auth providers other than Internet Identity.",
+    "No real-time updates, chat, or notifications.",
+    "No external database or off-chain storage integration."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Warm, cozy family-blog logo mark with simple illustration style (family-blog-logo.dim_512x512.png)",
+      "Wide header banner in a warm scrapbook/journal aesthetic with subtle paper texture and gentle accents (family-blog-banner.dim_1600x500.png)"
+    ],
+    "edits": []
+  }
+}

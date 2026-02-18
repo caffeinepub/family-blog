@@ -1,0 +1,99 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-17T23:59:41.215Z",
+  "summary": "Core blog UI, Internet Identity sign-in/out, routing, and React Query hooks are implemented. However, the backend post model/API does not meet the persistence and data-shape requirements (stable storage, createdAt/updatedAt, and clear error results), and several unrequested features were added (user profiles, admin token/access-control initialization, external promotional footer).",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Posts are persisted in canister stable storage (survive canister upgrade).",
+      "reason": "The backend stores posts in an in-memory Map with a var nextPostId, but no stable variables or preupgrade/postupgrade logic is shown in the diff summary.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Each post includes at minimum: id, title, content, author principal, createdAt, updatedAt.",
+      "reason": "The Post type only includes id, author, title, body, and a single timestamp field; there are no createdAt/updatedAt fields, and updatePost does not update timestamps.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "List endpoint returns posts sorted by createdAt descending.",
+      "reason": "Backend getAllPosts sorts with compareByTimestamp which orders ascending by timestamp; the frontend reverses the list, but the requirement specifies the backend list endpoint returns newest-first.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/usePosts.ts"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Backend methods return clear success/error results for invalid ids and unauthorized operations.",
+      "reason": "Backend methods use Runtime.trap for errors (e.g., missing post, unauthorized) rather than returning structured success/error results.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "User profile system (get/save caller profile) plus a forced profile setup dialog collecting a name.",
+      "reason": "The BuildRequest only asks for blog posts + Internet Identity auth state; it does not request user profiles or name onboarding.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useCurrentUserProfile.ts",
+        "frontend/src/components/auth/ProfileSetupDialog.tsx",
+        "frontend/src/components/auth/IdentityIndicator.tsx",
+        "frontend/src/components/layout/AppLayout.tsx"
+      ]
+    },
+    {
+      "description": "Admin token / access-control initialization via a secret URL parameter (caffeineAdminToken) and backend access-control mixins.",
+      "reason": "No requirement requests an admin token mechanism or custom access-control initialization; authorization requested was limited to per-author update/delete.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/utils/urlParams.ts"
+      ]
+    },
+    {
+      "description": "External promotional footer link to caffeine.ai and inclusion of a heart symbol in the footer text.",
+      "reason": "Not requested in the BuildRequest and introduces extra branding/UX not specified.",
+      "evidence": [
+        "frontend/src/components/layout/AppLayout.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/auth/IdentityIndicator.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/auth/ProfileSetupDialog.tsx",
+    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/posts/PostActions.tsx",
+    "frontend/src/components/posts/PostCard.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useCurrentUserProfile.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/usePosts.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/PostDetailPage.tsx",
+    "frontend/src/pages/PostEditorPage.tsx",
+    "frontend/src/pages/PostsFeedPage.tsx",
+    "frontend/src/utils/format.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}
